@@ -125,7 +125,7 @@ def main():
     with open(args.prompt_path, "r", encoding="utf-8") as f:
         safety_prompt = f.read().strip() + "\n"
 
-    other_process_data(args, safety_prompt)
+    #other_process_data(args, safety_prompt)
     our_process_data(args, safety_prompt)
 
 if __name__ == "__main__":

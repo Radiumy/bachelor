@@ -1,4 +1,4 @@
 {
-    "default_datasets": ["NotInject_one", "NotInject_two", "NotInject_three"],
-    "default_models": ["qwen2.5:1.5b-instruct-q8_0", "llama3.2:1b-instruct-q8_0", "deepseek-r1:1.5b-qwen-distill-q8_0", "qwen2.5:7b-instruct-q8_0"]
+    "default_datasets": ["prompt_injection"],
+    "default_models": ["llama3.2:1b-instruct-q8_0", "qwen2.5:1.5b-instruct-q8_0", "deepseek-r1:1.5b-qwen-distill-q8_0", "qwen2.5:7b-instruct-q8_0"]
 }
