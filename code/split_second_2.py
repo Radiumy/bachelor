@@ -62,7 +62,7 @@ def main():
                             
                             score = (1 - similarity_unsafe.item()) * 0.5 + similarity_without.item() * 0.5
 
-                            sentence_results.append(score > threshold)
+                            sentence_results.append(bool(score > threshold))
                         else:
                             sentence_results.append(True)
 
@@ -71,7 +71,7 @@ def main():
 
                     item['result'] = (true_count >= false_count)
                     item['sentence_results'] = sentence_results
-                    item['threshold'] = threshold
+                    item['threshold'] = float(threshold)
 
                 output_file = os.path.join(args.output_dir, f"final_{dataset_name}_{model_tag}_{threshold:.2f}_all_ollama_splitsentence.json")
 
