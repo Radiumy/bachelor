@@ -1,4 +1,4 @@
-import json
+import copy
 import os
 import argparse
 import numpy as np
@@ -17,6 +17,9 @@ def parse_args():
                        help="Start, end and step for threshold exploration")
     return parser.parse_args()
 
+def make_thresholds(start, end, step):
+    return [round(x, 2) for x in np.arange(start, end + 1e-8, step)]
+
 def main():
     args = parse_args()
 
@@ -25,6 +28,7 @@ def main():
     print("Loading embedding model...")
     embedding_model = SentenceTransformer("/home/yzl/yzl/model/all-MiniLM-L6-v2")
 
+    thresholds = make_thresholds(*args.threshold_range)
     for dataset_name in args.dataset_names:
         for model_name in args.model_names:
             print(f"Processing dataset: {dataset_name}, model: {model_name}")
@@ -35,8 +39,8 @@ def main():
             if data is None:
                 continue
 
-            for threshold in np.arange(args.threshold_range[0], args.threshold_range[1], args.threshold_range[2]):
-                threshold_data = [item.copy() for item in data if item.get('result') is None]
+            for threshold in thresholds:
+                threshold_data = copy.deepcopy(data)
                 for item in tqdm(threshold_data, desc=f"Processing {dataset_name}-{model_tag}", ncols=100):
                     if item.get('result') is not None:
                         continue
@@ -69,11 +73,11 @@ def main():
                     item['sentence_results'] = sentence_results
                     item['threshold'] = threshold
 
-                    output_file = os.path.join(args.output_dir, f"final_{dataset_name}_{model_tag}_{threshold:.2f}_all_ollama_splitsentence.json")
+                output_file = os.path.join(args.output_dir, f"final_{dataset_name}_{model_tag}_{threshold:.2f}_all_ollama_splitsentence.json")
 
-                create_json(data, output_file, indent=4)
+                create_json(threshold_data, output_file, indent=4)
 
-            print(f"Finished {dataset_name}-{model_name}, results saved to {output_file}")
+            print(f"Finished {dataset_name}-{model_name}-{threshold:.2f}, results saved to {output_file}")
 
     print("All datasets and models processed successfully!")
 
