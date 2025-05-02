@@ -3,6 +3,7 @@ import argparse
 import sys
 from utils import read_json
 
+
 def parse_args():
     config = read_json("../config/config.json")
     parser = argparse.ArgumentParser(description="Run both Stage 1 and Stage 2 scripts sequentially.")
@@ -19,6 +20,20 @@ def parse_args():
     parser.add_argument('--final_output_dir', type=str, default="../eval/ours_results", help="Final output dir from Stage 2")
     parser.add_argument('--sim_threshold', type=float, default=0.85, help="Similarity threshold for Stage 2")
     return parser.parse_args()
+def run_first(args):
+    print("\n=========================")
+    print("first stage...")
+    print("=========================\n")
+    stage_command = [
+        sys.executable, "first_plus.py",  
+        "--dataset_names", *args.dataset_names,
+        "--model_names", *args.model_names
+    ]
+
+    result = subprocess.run(stage_command)
+    if result.returncode != 0:
+        print("\n[Error] First failed.")
+        sys.exit(1)
 
 def run_stage_1(args):
     print("\n=========================")
@@ -50,8 +65,7 @@ def run_stage_2(args):
         "--dataset_names", *args.dataset_names,
         "--model_names", *args.model_names,
         "--base_input_path", args.mid_output_dir,
-        "--output_dir", args.final_output_dir,
-        "--sim_threshold", str(args.sim_threshold)
+        "--output_dir", args.final_output_dir
     ]
 
     result = subprocess.run(stage2_command)
@@ -61,6 +75,7 @@ def run_stage_2(args):
 
 def main():
     args = parse_args()
+    run_first(args)
     run_stage_1(args)
     run_stage_2(args)
     print("\n All stages completed successfully!")
